@@ -1,10 +1,8 @@
-<!-- form2.php -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>form2</title>
+	<title>messageForm</title>
 
 	<style type="text/css">
 
@@ -41,7 +39,7 @@
 <body>
 	
 	<div class="container">
-		<form action="post2.php" method="post">
+		<form action="messageAdd.php" method="post">
 				
 			<div class="div">
 				<h2>留言板</h2>
