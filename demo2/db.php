@@ -13,16 +13,33 @@ interface db {
 
 class Mysql implements db {
 	private $conn = null;//连接数据库
+	private $debug = false;
 
 	//构造方法
 	public function __construct() {
 		// echo '构造方法<br />';
+		// $this->connect('');
 	}
 
 	//析构方法
 	public function __destruct() {
 		// echo '析构方法<br />';
+		$this->conn->close();
 	}
+
+	//sql执行函数
+	private function execute($sql) {
+		if ($this->debug == true) {
+			echo 'SQL:'.$sql.'<br />';
+		}
+		$result = $this->conn->query($sql);
+		return $result;
+	}
+
+	public function openDebug() {
+		$this->debug = true;
+	}
+
 
 	//连接数据库
 	//$database: 数据库名
@@ -73,13 +90,8 @@ class Mysql implements db {
 		$sql = "INSERT INTO {$table} ({$fields})
 		VALUES ({$values})";
 
-		// var_dump($sql);
-
-		$result = mysqli_query($this->conn, $sql);
-
-		$row = mysqli_affected_rows($this->conn);
-
-		if($row > 0) {
+		$result = $this->execute($sql);
+		if ($result == true) {
 			// echo '插入成功<br />';
 			return true;
 		}
@@ -95,7 +107,7 @@ class Mysql implements db {
 	public function delete($table, $where) {
 		$sql = "DELETE FROM {$table} WHERE {$where}";
 
-		$result = mysqli_query($this->conn, $sql);
+		$result = $this->execute($sql);
 
 		$row = mysqli_affected_rows($this->conn);
 
@@ -130,7 +142,7 @@ class Mysql implements db {
 		//sql语句
 		$sql = $before.$fields.$after;
 
-		$result = mysqli_query($this->conn, $sql);
+		$result = $this->execute($sql);
 
 		$row = mysqli_affected_rows($this->conn);
 
@@ -155,7 +167,7 @@ class Mysql implements db {
 			$sql = "SELECT * FROM {$table}";
 		}
 
-		$result = mysqli_query($this->conn, $sql);
+		$result = $this->execute($sql);
 
 		$data = [];
 
@@ -183,7 +195,7 @@ class Mysql implements db {
 			$sql = "SELECT * FROM {$table}";
 		}
 
-		$result = mysqli_query($this->conn, $sql);
+		$result = $this->execute($sql);
 
 		$data = [];
 
@@ -205,10 +217,10 @@ class Mysql implements db {
 
 }
 
-
+echo '<pre>';
 $Mysql = new Mysql();
 // $Mysql->connect('php');
-// 
+$Mysql->openDebug();
 $Mysql -> connect('php');
 
 $data = [
@@ -220,10 +232,10 @@ $data = [
 
 $result = $Mysql->insert('person', $data);
 
-echo '<pre>';
+
 var_dump($result);
 
-$data = [
+$newdata = [
 	'name'  	=>  	'tyl',
 	'age'   	=>		'19',
 	'sex'		=>		'男',
@@ -231,11 +243,11 @@ $data = [
 ];
 
 
-$result = $Mysql->update('person', $data, 'id = 1');
+$result = $Mysql->update('person', $newdata, 'id = 5');
 
 var_dump($result);
 
-$result = $Mysql->delete('person', 'id = 2');
+$result = $Mysql->delete('person', 'id = 4');
 
 var_dump($result);
 
